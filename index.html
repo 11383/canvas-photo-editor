@@ -9,12 +9,48 @@
     </head>
     <body>
         <h2>Canvas editor</h2>
-        <canvas class="editor" width="600" height="400"></canvas>
+        <div class="playfield" style="height: 400px; background: black"></div>
         
-        <button id="change">Brighteness</button>
-        <button id="contrast">Contrast</button>
+        <div class="image-upload"></div>
 
+        <!-- <canvas class="editor" width="600" height="400"></canvas> -->
 
-        <script src="main.js"></script>
+        <input type="range" min="-1" max="1" step="0.01" id="light" class="editor-change">light</button>
+        <input type="range" min="-1" max="1" step="0.01" id="saturation" class="editor-change">saturation</button>
+        <input type="range" min="-1" max="1" step="0.01" id="hue" class="editor-change">hue</button>
+        <input type="range" min="-1" max="1" step="0.01" id="contrast" class="editor-change">contrast</button>
+
+        <!-- <script src="main.js"></script> -->
+        <!-- <script src="./ImageEditor.js"></script> -->
+
+        <script type="module">
+            import ImageEditor from './ImageEditor.js'
+            const myEditor = new ImageEditor('.playfield', '.preview-container')
+                  myEditor.setImage('./img.jpg')
+
+            window.editor = myEditor
+
+            document.querySelectorAll('.editor-change').forEach( slider => {
+                slider.addEventListener('input', (e) => {
+                    const element = e.target
+
+                    myEditor.postProcessParams[element.getAttribute('id')] = Number.parseFloat(element.value)
+                    myEditor.draw()
+                })
+            })
+        </script>
+
+        <script src="./ImageLoader.js"></script>
+
+        <script>
+            const iu = new ImageLoader('.image-upload')
+            iu.on('load', (img) => {
+                editor.setImage(img)
+            })
+        </script>
+        <!-- <script>
+            const imageEditor = new ImageEditor('.playfield')
+            imageEditor.setImage('./img.jpg')
+        </script> -->
     </body>
 </html>
