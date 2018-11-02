@@ -1,27 +1,69 @@
-import HSLPixel from './ImageEditor/HSLPixel.js'
+import cssFilter from './ImageEditor/FilterMethods/cssFilter.js'
+import canvasFilter from './ImageEditor/FilterMethods/canvasFilter.js'
+import canvasDataImg from './ImageEditor/FilterMethods/canvasDataImg.js'
+import {RGB, HSL} from './ImageEditor/Pixels/Pixels.js'
 
 class ImageEditor {
-    constructor(selector, containerSelector) {
-
-        this.postProcessParams = {
+    constructor(selector) {
+        
+        this.options = {
             hue: 0,
-            light: 0,
+            brighteness: 0,
             saturation: 0,
             contrast: 0
         }
 
-        this.postProcessEffects = {
-            active: null,
-            effects: {
-                'red': this.redEffect,
-                'test': this.testEffect
-            },
+        this.transformMethods = {
+            cssFilter: new cssFilter(),
+            canvasFilter: new canvasFilter(),
+            canvasRGB: new canvasDataImg(RGB),
+            canvasHSL: new canvasDataImg(HSL)
         }
+
+        this.activeTransformMethod = this.transformMethods.cssFilter
 
         this.createCanvas(selector)
 
         window.addEventListener('resize', this.resizeCanvas.bind(this))
         this.resizeCanvas()
+
+        // use effect
+        this.activeTransformMethod.use(this.options)
+    }
+
+    brighteness(value) {
+        this.options.brighteness = value
+
+        this.activeTransformMethod.brighteness(value)
+
+        this.draw()
+    }
+
+    contrast(value) {
+        this.options.contrast = value
+
+        this.activeTransformMethod.contrast(value)
+
+        this.draw()
+    }
+
+    saturation(value) {
+        this.options.saturation = value
+
+        this.activeTransformMethod.saturation(value)
+
+        this.draw()
+    }
+
+    // update options as array
+    updateOption(optionName, newValue) {
+        const allowedOptions = ['brighteness', 'contrast', 'saturation']
+
+        if( allowedOptions.includes(optionName) ) {
+            this[optionName](newValue)
+        } else {
+            throw new Error(`Not specified ${optionName} option!`)
+        }
     }
 
     createCanvas(selector) {
@@ -52,13 +94,11 @@ class ImageEditor {
         this.ctx.drawImage(img, ...areaBounds)
 
         const dataImg = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
-        const pixels = HSLPixel.fromImageData(dataImg)
         
         this.img = {
             img,
             areaBounds,
-            dataImg,
-            pixels
+            dataImg
         }
 
         this.draw()
@@ -76,13 +116,12 @@ class ImageEditor {
 
     // get secure canvas fill zone
     getCanvasImageBounds(img) {
-        var hRatio = this.canvas.width  / img.width    ;
-        var vRatio =  this.canvas.height / img.height  ;
-        var ratio  = Math.min ( hRatio, vRatio );
-        var centerShift_x = ( this.canvas.width - img.width*ratio ) / 2;
-        var centerShift_y = ( this.canvas.height - img.height*ratio ) / 2;  
+        const hRatio = this.canvas.width  / img.width    ;
+        const vRatio =  this.canvas.height / img.height  ;
+        const ratio  = Math.min ( hRatio, vRatio );
+        const centerShift_x = ( this.canvas.width - img.width*ratio ) / 2;
+        const centerShift_y = ( this.canvas.height - img.height*ratio ) / 2;  
 
-        // saveArea
         return [
             0, 
             0,
@@ -95,73 +134,50 @@ class ImageEditor {
         ]
     }
 
-    // hslFilters
-    noneEffect(hsl) {
-        return hsl
+    clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    
+    drawImage() {
+        const areaBounds = this.getCanvasImageBounds(this.img.img)
+        this.ctx.drawImage(this.img.img, ...areaBounds)    
     }
 
-    testEffect(hsl, index, width, height) {
-        const {h, s, l} = hsl
-                
-        return {
-            h: index % width / width,
-            // h,
-            s,
-            // s : h > 0.2 && h < 0.4 ? s : -1,
-            // s: Math.random() * index % width / width,
-            l
+    putImageData(imgData, x = 0, y = 0, ...params) {
+        this.ctx.putImageData(imgData, x, y, ...params)
+    }
+
+    // return 
+    getImgData() {
+        const {data, width, height} = this.img.dataImg
+
+        return new ImageData(
+            new Uint8ClampedArray(data),
+            width,
+            height
+        )
+    }
+
+    getTransformMethods() {
+        return Object.keys(this.transformMethods)
+    }
+
+    setTransformMethod(transformMethodName) {
+        if(this.getTransformMethods().includes(transformMethodName)) {
+            // unuse old
+            this.activeTransformMethod && this.activeTransformMethod.unuse(this)
+
+            // use new
+            this.activeTransformMethod = this.transformMethods[transformMethodName]
+            this.activeTransformMethod.use(this.options)
+            
+            // apply changes to canvas
+            this.draw()
         }
-    }
-
-    redEffect(hsl, x, y, width, height) {
-        const {s, l} = hsl
-
-        return {
-            h: 0.2,
-            s,
-            l: 0.2
-        }
-    }
-
-    optionsEffects(hsl) {
-        const {h,s,l} = hsl
-
-        return {
-            h: h + this.postProcessParams.hue,
-            s: Math.max(s + this.postProcessParams.saturation, 0),
-            l: l + this.postProcessParams.light
-            // l: this.effects.light + Math.max( l +  this.effects.contrast / 5 * (l > 0.5 ? 1 : -1), 0)
-        }
-    }
-
-    // applyEffects
-    applyEffect(effect, pixels) {
-        return pixels.map( (pixel, index) => {
-            return effect(pixel, index, this.img.dataImg.width, this.img.dataImg.height)
-        })
     }
 
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        if(this.img.pixels) {
-            const effect = this.testEffect
-
-            let manipulatedPixels = this.img.pixels
-
-            if(this.postProcessEffects.active != null) {
-                manipulatedPixels = this.applyEffect(this.postProcessEffects.effects[
-                    this.postProcessEffects.active
-                ], manipulatedPixels)
-            }
-            
-            manipulatedPixels = this.applyEffect(this.optionsEffects.bind(this), manipulatedPixels)
-
-            const imgData = HSLPixel.toImageData(manipulatedPixels, this.img.dataImg)
-
-            this.img.dataImg && this.ctx.putImageData( imgData, 0, 0)
-        }
-        
+        this.activeTransformMethod.draw(this)
     }
 }
 

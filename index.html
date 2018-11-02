@@ -5,23 +5,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
 
+        <!-- <link rel="stylesheet" type="text/css" href="./image-loader.css"> -->
+        <!-- <link rel="stylesheet" type="text/css" href="./image-editor.css"> -->
+
         <title>Canvas editor</title>
     </head>
     <body>
         <h2>Canvas editor</h2>
+       
         <div class="playfield" style="height: 400px; background: black"></div>
-        
-        <div class="image-upload"></div>
 
-        <!-- <canvas class="editor" width="600" height="400"></canvas> -->
+        B: <input class="editor-change" type="range" min="-1" max="1" step="0.01" id="brighteness">
+        S: <input type="range" min="-1" max="1" step="0.01" id="saturation" class="editor-change">
+        H: <input type="range" min="-1" max="1" step="0.01" id="hue" class="editor-change">
+        C: <input type="range" min="-1" max="1" step="0.01" id="contrast" class="editor-change">    
+    
+        <select class="transformMethods"></select>
 
-        <input type="range" min="-1" max="1" step="0.01" id="light" class="editor-change">light</button>
-        <input type="range" min="-1" max="1" step="0.01" id="saturation" class="editor-change">saturation</button>
-        <input type="range" min="-1" max="1" step="0.01" id="hue" class="editor-change">hue</button>
-        <input type="range" min="-1" max="1" step="0.01" id="contrast" class="editor-change">contrast</button>
+        <h3>Images</h3>
+        <div class="image-loader">
+            <div class="image-preview">
+                <span class="demo-card-image__filename">Image.jpg</span>
+            </div>
+            <input type="file" class="image-input" />
+        </div>
 
-        <!-- <script src="main.js"></script> -->
-        <!-- <script src="./ImageEditor.js"></script> -->
 
         <script type="module">
             import ImageEditor from './ImageEditor.js'
@@ -34,23 +42,32 @@
                 slider.addEventListener('input', (e) => {
                     const element = e.target
 
-                    myEditor.postProcessParams[element.getAttribute('id')] = Number.parseFloat(element.value)
-                    myEditor.draw()
+                    myEditor.updateOption(element.getAttribute('id'), Number.parseFloat(element.value))
                 })
             })
+
+            const select = document.querySelector('.transformMethods')
+
+            myEditor.getTransformMethods().forEach( tfMethod => {
+                const method = document.createElement('option')
+                      method.value = method.innerHTML = tfMethod
+                      select.appendChild(method)
+            })
+
+            select.addEventListener('change', (e) => {
+                myEditor.setTransformMethod(e.target.value)
+            })
+
+            window.myEditor = myEditor
         </script>
 
         <script src="./ImageLoader.js"></script>
 
         <script>
-            const iu = new ImageLoader('.image-upload')
+            const iu = new ImageLoader('.image-loader')
             iu.on('load', (img) => {
                 editor.setImage(img)
             })
         </script>
-        <!-- <script>
-            const imageEditor = new ImageEditor('.playfield')
-            imageEditor.setImage('./img.jpg')
-        </script> -->
     </body>
 </html>
