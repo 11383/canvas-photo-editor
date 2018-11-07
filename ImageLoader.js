@@ -2,38 +2,29 @@ class ImageLoader {
     constructor(selector) {
         this.events = {}
         
-        this.createInputField(selector)
-    }
+        this.input = document.querySelector(selector)
+        this.input && this.input.addEventListener('change', (e) => this.onChange(e) )
 
-    createInputField(selector) {
-        this.selector = selector
-        this.element = document.querySelector(selector)
-
-        if(this.element == null) {
-            throw new Error(`Element with given selector (${selector}) not found!`)
-        }
-
-        const input = document.createElement('input')
-              input.type = 'file'
-              input.className = 'img-upload'
-
-        this.element.appendChild(input)
-
-        input.addEventListener('change', (e) => this.onChange(e) )
+        this.emit('init', this)
     }
 
     onChange(e) {
         const input = e.target
 
         if(input && input.files && input.files[0]) {
-            const reader = new FileReader()
 
-            reader.addEventListener('load', (e) => {
-                this.emit('load', e.target.result)
+            Array.from( input.files ).forEach( file => {
+                const reader = new FileReader()
+
+                reader.addEventListener('load', (e) => {
+                    this.emit('load', e.target.result, file)
+                })
+
+                reader.readAsDataURL(file)
             })
-
-            reader.readAsDataURL(input.files[0])
         }
+
+        this.emit('change', e)
     }
 
     on(eventName, callback) {
