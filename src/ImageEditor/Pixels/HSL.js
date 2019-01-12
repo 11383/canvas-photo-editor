@@ -87,6 +87,3 @@ class HSLPixel {
 }
 
 export default HSLPixel
-
-window.pixel = new HSLPixel(0, 0, 255)
-window.pixelClass = HSLPixel
