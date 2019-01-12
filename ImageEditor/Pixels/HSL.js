@@ -1,10 +1,10 @@
 class HSLPixel {
     constructor( r, g, b ) {
-        this.r = r
-        this.g = g
-        this.b = b
-
-        // @todo convert to hsl
+        const [h, s, l] = HSLPixel.rgbToHsl(r, g, b)
+        
+        this.h = h
+        this.s = s
+        this.l = l
     }
 
     contrast(value) {
@@ -14,20 +14,72 @@ class HSLPixel {
     }
 
     brighteness(value) {
-        // @todo
+        this.l += value / 100
 
         return this
     }
 
     saturation(value) {
-        // @todo
+        this.s += value / 50
 
         return this
     }
 
     value() {
-        // @todo convert hsl => rgb
-        return [this.r, this.g, this.b]
+        return HSLPixel.hslToRGB(this.h, this.s, this.l)
+    }
+
+    /* from: https://gist.github.com/mjackson/5311256 */
+    static rgbToHsl(r, g, b)  {
+        r /= 255, g /= 255, b /= 255;
+      
+        let max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+      
+        if (max == min) {
+            h = s = 0; // achromatic
+        } else {
+            let d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+        
+            h /= 6;
+        }
+      
+        return [ h, s, l ];
+    }
+
+    /* from: https://gist.github.com/mjackson/5311256 */
+    static hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+    }
+
+    /* from: https://gist.github.com/mjackson/5311256 */
+    static hslToRGB(h, s, l) {
+        let r, g, b;
+  
+        if (s == 0) {
+            r = g = b = l; // achromatic
+        } else {
+            let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            let p = 2 * l - q;
+        
+            r = HSLPixel.hue2rgb(p, q, h + 1/3);
+            g = HSLPixel.hue2rgb(p, q, h);
+            b = HSLPixel.hue2rgb(p, q, h - 1/3);
+        }
+    
+        return [ r * 255, g * 255, b * 255, 0 ];
     }
 }
 

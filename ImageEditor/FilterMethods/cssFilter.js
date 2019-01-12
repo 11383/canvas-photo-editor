@@ -8,7 +8,7 @@ class cssFilter extends filterInterface {
         this.options = {
             contrast: 1,
             brighteness: 1,
-            saturation: 1
+            saturation: 0
         }
     }
 
@@ -35,17 +35,26 @@ class cssFilter extends filterInterface {
     }
 
     saturation(value) { // -1,1 <0, 10> 
-        this.options.saturation = Number((value + 1) * 5).toFixed(2)
+        this.options.saturation = Number((value * 5 ) + 1).toFixed(2)
     }
 
-    draw(imageEditor) {
+    applyEffect(effect, filters) {
+        return effect(this.options, filters)
+    }
 
-        imageEditor.canvas.style.filter = `
+    draw(imageEditor, effect = null) {
+
+        let filters = `
             contrast(${this.options.contrast})
             brightness(${this.options.brighteness})
             saturate(${this.options.saturation})
         `
 
+        if (effect) {
+            filters = this.applyEffect(effect, filters)
+        }
+
+        imageEditor.canvas.style.filter = filters
     }
 }
 

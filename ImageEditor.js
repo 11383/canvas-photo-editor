@@ -2,6 +2,7 @@ import cssFilter from './ImageEditor/FilterMethods/cssFilter.js'
 import canvasFilter from './ImageEditor/FilterMethods/canvasFilter.js'
 import canvasDataImg from './ImageEditor/FilterMethods/canvasDataImg.js'
 import {RGB, HSL} from './ImageEditor/Pixels/Pixels.js'
+import Effects from './ImageEditor/FilterEffects/Default.js'
 
 class ImageEditor {
     constructor(selector) {
@@ -14,11 +15,14 @@ class ImageEditor {
         }
 
         this.transformMethods = {
-            cssFilter: new cssFilter(),
+            cssFilter: new cssFilter(this.options, this),
             canvasFilter: new canvasFilter(),
             canvasRGB: new canvasDataImg(RGB),
             canvasHSL: new canvasDataImg(HSL)
         }
+
+        this.effects = Effects
+        this.activeEffect = null
 
         this.activeTransformMethod = this.transformMethods.cssFilter
 
@@ -27,7 +31,7 @@ class ImageEditor {
         window.addEventListener('resize', this.resizeCanvas.bind(this))
         this.resizeCanvas()
 
-        // use effect
+        // use filter
         this.activeTransformMethod.use(this.options)
     }
 
@@ -106,12 +110,9 @@ class ImageEditor {
 
     setImage(src) {
         let img = new Image()
-        img.src = src
+            img.src = src
 
-        img.addEventListener('load', () => {
-
-            this.fitImage( img )
-        })
+        img.addEventListener('load', () => { this.fitImage( img ) })
     }
 
     // get secure canvas fill zone
@@ -147,7 +148,6 @@ class ImageEditor {
         this.ctx.putImageData(imgData, x, y, ...params)
     }
 
-    // return 
     getImgData() {
         const {data, width, height} = this.img.dataImg
 
@@ -177,7 +177,50 @@ class ImageEditor {
     }
 
     draw() {
-        this.activeTransformMethod.draw(this)
+        this.activeTransformMethod.draw(
+            this,
+            this.drawEffect()
+        )
+    }
+
+    drawEffect() {
+        if(this.activeEffect !== null) {
+            return (...params) => this.activeEffect.draw(5, ...params)
+        }
+
+        return null
+    }
+
+
+    //add & apply new filter to ImageEditor
+    applyEffect(filter) {
+        this.effects.push(filter)
+    }
+
+    //returns all effects names
+    getEffects() {
+        return this.effects.map( item => item.name )
+    }
+
+    setEffect(effectName) {
+        const effect = this.effects.find( item => item.name == effectName )
+
+        if (effect) {
+            // override brigteness, saturation , contrast if needed
+            effect.options && Object.keys(effect.options).forEach(option => {
+                this.updateOption(option, effect.options[option])
+            })
+
+            this.activeEffect = effect
+            this.setTransformMethod(effect.transformMethod)
+        }
+    }
+
+    // clear effect
+    clearEffect() {
+        this.activeEffect = null
+        // update view
+        this.drawImage()
     }
 }
 

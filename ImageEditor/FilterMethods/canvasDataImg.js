@@ -37,32 +37,34 @@ class canvasDataImg extends filterInterface {
         this.options.saturation = value * 10
     }
 
-    draw(imageEditor) {
+    applyEffect(effect, pixel, i, width, height) {
+        effect(this.options, pixel, {
+            x: i / 4 % width,
+            y: Math.floor( i / 4 / width ) + 1,
+            width,
+            height
+        })
+    }
+
+    draw(imageEditor, effect = null) {
         const imgData = imageEditor.getImgData()
 
         for(let i=0; i < imgData.data.length; i += 4 ) {
+            let pixel = new this.pixelClass(
+                imgData.data[i], 
+                imgData.data[i+1], 
+                imgData.data[i+2]
+            )
 
-            // more redeable, but slowly
-            // const pixel = new RGBPixel( imgData.data[i], imgData.data[i+1], imgData.data[i+2])
-            //
-            // pixel
-            //   .contrast(this.options.contrast)
-            //   .saturation(this.options.saturation)
-            //   .brighteness(this.options.brighteness)
-            //   .value()
-            //
-            // [ imgData.data[i], imgData.data[i+1], imgData.data[i+2]] = pixel
-              
-            [ imgData.data[i], imgData.data[i+1], imgData.data[i+2]] = 
-                (new this.pixelClass( 
-                    imgData.data[i], 
-                    imgData.data[i+1], 
-                    imgData.data[i+2]
-                ))
-                .contrast(this.options.contrast)
-                .saturation(this.options.saturation)
-                .brighteness(this.options.brighteness)
-                .value()
+            if (effect) {
+                this.applyEffect(effect, pixel, i, imgData.width, imgData.height)
+            }
+            
+            [ imgData.data[i], imgData.data[i+1], imgData.data[i+2] ] = pixel
+              .contrast(this.options.contrast)
+              .saturation(this.options.saturation)
+              .brighteness(this.options.brighteness)
+              .value()
         }
 
         imageEditor.putImageData(imgData)

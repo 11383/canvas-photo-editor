@@ -38,15 +38,24 @@ class canvasFilter extends filterInterface {
         this.options.saturation = Number( (value + 1) * 100).toFixed(2)
     }
 
-    draw(imageEditor) {
+    applyEffect(effect, filters) {
+        return effect(this.options, filters)
+    }
+
+    draw(imageEditor, effect = null) {
         imageEditor.clearCanvas()
 
-        imageEditor.ctx.filter = `
+        let filters  = `
             contrast(${this.options.contrast}%)
             brightness(${this.options.brighteness}%)
             saturate(${this.options.saturation}%)
         `
 
+        if (effect) {
+            filters = this.applyEffect(effect, filters)
+        }
+
+        imageEditor.ctx.filter = filters
         imageEditor.drawImage()
     }
 }
