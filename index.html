@@ -28,25 +28,43 @@
                 <div class="demo-slider-group mdl-grid">
                     <i class="material-icons"> brightness_low </i> 
                     <input class="editor-change mdl-slider mdl-js-slider" type="range" min="-1" max="1" step="0.01" id="brighteness">
-                    <!-- <span class="js-slider-value">20</span>         -->
                 </div>
     
                 <div class="demo-slider-group mdl-grid">
                     <i class="material-icons"> color_lens </i> <!-- format_color -->
                     <input class="editor-change mdl-slider mdl-js-slider" type="range" min="-1" max="1" step="0.01" id="saturation">
-                    <!-- <span class="js-slider-value">20</span>         -->
                 </div>
     
                 <div class="demo-slider-group mdl-grid">
                     <i class="material-icons"> exposure </i> 
                     <input class="editor-change mdl-slider mdl-js-slider" type="range" min="-1" max="1" step="0.01" id="contrast">
-                    <!-- <span class="js-slider-value">20</span>         -->
                 </div>
-                
+
+                <div class="demo-slider-group mdl-grid">
+                    <label for="effect-select" class="demo-select--icon">
+                        <i class="material-icons icon"> style </i> 
+
+                        <select class="effects demo-select demo-select--left" name="effects-select" id="effect-select">
+                            <option>no-effect</option>
+                        </select>
+                    </label>
+                    
+                    <input class="editor-change mdl-slider mdl-js-slider" type="range" min="-1" max="1" step="0.01" id="effect">
+                </div>
+            </div>
+
+            <div class="mdl-cell--4-col-phone mdl-cell--6-col mdl-cell--1-offset-tablet mdl-cell--3-offset-desktop">            
+                <div class="demo-slider-group mdl-grid">
+                    <i class="material-icons"> build </i> 
+
+                    <div class="demo-input-group">
+                        <select class="editor-methods demo-select">
+                            <option>methods</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <select class="transformMethods"></select>
 
         <h3>Images</h3>
 
@@ -62,57 +80,28 @@
         </button>
 
 
-        <script type="module">
-            import ImageEditor from './ImageEditor.js'
-            const myEditor = new ImageEditor('.demo-image-canvas')
-                  myEditor.setImage('./img.jpg')
-
-            window.editor = myEditor
-
-            document.querySelectorAll('.editor-change').forEach( slider => {
-                slider.addEventListener('input', (e) => {
-                    const element = e.target
-
-                    myEditor.updateOption(element.getAttribute('id'), Number.parseFloat(element.value))
-                })
-            })
-
-            const select = document.querySelector('.transformMethods')
-
-            myEditor.getTransformMethods().forEach( tfMethod => {
-                const method = document.createElement('option')
-                      method.value = method.innerHTML = tfMethod
-                      select.appendChild(method)
-            })
-
-            select.addEventListener('change', (e) => {
-                myEditor.setTransformMethod(e.target.value)
-            })
-
-            window.myEditor = myEditor
-        </script>
-
+        <!-- demo js -->
+        <script src="./demo.js"></script>
         <script src="./ImageLoader.js"></script>
 
-        <script>
-            const iu = new ImageLoader('#image-file')
+        <script type="module">
+            import ImageEditor from './ImageEditor.js'
+            
+            // Editor
+            const editor = new ImageEditor('.demo-image-canvas')
+                  editor.setImage('./img.jpg')
+
+            initSlidersEvents('.editor-change', editor)
+            initMethodsSelect('.editor-methods', editor)
+            initEffectsSelect('.effects', editor, updateSliders)
+            
+            // ImgLoader
+            const imgLoader = new ImageLoader('#image-file')
             const imageContainer = document.querySelector('.image-loader-preview')
 
-            iu.on('load', (img, e, reader) => {
-
-                const preview = document.createElement('div')
-                      preview.classList.add('demo-card-image', 'mdl-card', 'mdl-shadow--2dp', 'mdl-cell')
-                      preview.style.backgroundImage = `url(${img})`
-
-                      preview.innerHTML = `
-                      <div class="mdl-card__title mdl-card--expand"></div>
-                        <div class="mdl-card__actions">
-                        <span class="demo-card-image__filename">${e.name}</span>
-                        </div>
-                      </div>
-                      `
-
-                      preview.addEventListener('click', () => { editor.setImage(img) })
+            imgLoader.on('load', (img, e, reader) => {
+                const preview = createImagePreview(img, e.name)
+                preview.addEventListener('click', () => { editor.setImage(img) })
 
                 imageContainer.appendChild(preview)
 

@@ -11,7 +11,8 @@ class ImageEditor {
             hue: 0,
             brighteness: 0,
             saturation: 0,
-            contrast: 0
+            contrast: 0,
+            effect: 0
         }
 
         this.transformMethods = {
@@ -59,9 +60,15 @@ class ImageEditor {
         this.draw()
     }
 
+    effect(value) {
+        this.options.effect = value
+
+        this.draw()
+    }
+
     // update options as array
     updateOption(optionName, newValue) {
-        const allowedOptions = ['brighteness', 'contrast', 'saturation']
+        const allowedOptions = ['brighteness', 'contrast', 'saturation', 'effect']
 
         if( allowedOptions.includes(optionName) ) {
             this[optionName](newValue)
@@ -185,12 +192,14 @@ class ImageEditor {
 
     drawEffect() {
         if(this.activeEffect !== null) {
-            return (...params) => this.activeEffect.draw(5, ...params)
+            return (...params) => this.activeEffect.draw(
+                this.options.effect, 
+                ...params
+            )
         }
 
         return null
     }
-
 
     //add & apply new filter to ImageEditor
     applyEffect(filter) {
@@ -205,19 +214,25 @@ class ImageEditor {
     setEffect(effectName) {
         const effect = this.effects.find( item => item.name == effectName )
 
-        if (effect) {
+        if (effect !== undefined) {
             // override brigteness, saturation , contrast if needed
-            effect.options && Object.keys(effect.options).forEach(option => {
-                this.updateOption(option, effect.options[option])
-            })
+            effect.options && (
+                this.options = {...this.options, ...effect.options}
+            )
 
             this.activeEffect = effect
             this.setTransformMethod(effect.transformMethod)
+        } else {
+            this.clearEffect()
         }
     }
 
     // clear effect
     clearEffect() {
+        if (this.activeEffect) {
+            this.activeTransformMethod.unuse(this)
+        }
+
         this.activeEffect = null
         // update view
         this.drawImage()

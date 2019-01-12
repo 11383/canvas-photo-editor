@@ -27,6 +27,7 @@ class canvasDataImg extends filterInterface {
 
     brighteness(value) {
         this.options.brighteness = value * 100
+        console.log(this.options.brighteness)
     }
 
     contrast(value) {

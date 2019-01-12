@@ -48,3 +48,73 @@
     height: 400px; 
     background: whitesmoke
 }
+
+.demo-select {
+    border: none;
+    padding: 6px 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100px;
+
+    text-align-last:center;
+
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-size: 16px;
+    background-position: calc(100% - 4px);
+    background-repeat: no-repeat;
+}
+
+
+.demo-select--left {
+    margin-left: -75px;
+}
+
+.demo-select--icon .icon {
+    display: none;    
+    position: relative;
+}
+
+.demo-select--icon .icon::after {
+    content: '';
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-size: 16px;
+    background-position: calc(100% - 4px);
+    background-repeat: no-repeat;
+
+    width: 16px;
+    height: 16px;
+
+    display: block;
+    position: absolute;
+    top: 4px;
+    right: -20px;
+}
+
+
+@media screen and (max-width: 480px) {
+    .demo-select--icon {
+        position: relative;
+    }
+
+    .demo-select--icon .icon {
+        display: block;
+    }
+
+    .demo-select--left {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin-left: 0;
+        opacity: 0;
+    }
+}
+
+.demo-input-group {
+    padding: 0 26px;
+}
+
+.demo-input-group__item + .demo-input-group__item {
+    margin-left: 20px;
+}

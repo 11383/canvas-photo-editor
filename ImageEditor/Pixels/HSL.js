@@ -2,9 +2,9 @@ class HSLPixel {
     constructor( r, g, b ) {
         const [h, s, l] = HSLPixel.rgbToHsl(r, g, b)
         
-        this.h = h
-        this.s = s
-        this.l = l
+        this.h = h * 360
+        this.s = s * 100
+        this.l = l * 100
     }
 
     contrast(value) {
@@ -14,13 +14,13 @@ class HSLPixel {
     }
 
     brighteness(value) {
-        this.l += value / 100
+        this.l += value
 
         return this
     }
 
     saturation(value) {
-        this.s += value / 50
+        this.s = this.s / 10 * (value + 10)
 
         return this
     }
@@ -67,6 +67,9 @@ class HSLPixel {
     /* from: https://gist.github.com/mjackson/5311256 */
     static hslToRGB(h, s, l) {
         let r, g, b;
+        h/= 360
+        s/=100
+        l/=100
   
         if (s == 0) {
             r = g = b = l; // achromatic
@@ -84,3 +87,6 @@ class HSLPixel {
 }
 
 export default HSLPixel
+
+window.pixel = new HSLPixel(0, 0, 255)
+window.pixelClass = HSLPixel
