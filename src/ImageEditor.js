@@ -3,6 +3,7 @@ import canvasFilter from './ImageEditor/FilterMethods/canvasFilter.js'
 import canvasDataImg from './ImageEditor/FilterMethods/canvasDataImg.js'
 import {RGB, HSL} from './ImageEditor/Pixels/Pixels.js'
 import Effects from './ImageEditor/FilterEffects/Default.js'
+import CanvasSave from './ImageEditor/Utils/Canvas.js'
 
 class ImageEditor {
     constructor(selector) {
@@ -236,6 +237,10 @@ class ImageEditor {
         this.activeEffect = null
         // update view
         this.drawImage()
+    }
+
+    save() {
+        CanvasSave(this.canvas)
     }
 }
 

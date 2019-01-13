@@ -70,13 +70,40 @@
 
         <div class="image-loader-preview demo-image-grid mdl-grid"></div>
 
-        <button class="demo-fab mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-            <div class="demo-file-wrapper">
+        <button class="demo-fab fab-menu mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+            <ul class="fab-menu__container">
+                <li class="fab-menu__item">
+                    <label for="image-file" class="file-upload-wrapper">
+                        <span class="fab-menu__item_desc">
+                            Upload
+                        </span>
+                        <span class="fab-menu__item_icon">
+                            <i class="icon material-icons">cloud_upload</i>
+                        </span>
+                        
+                        <input id="image-file" type="file" multiple class="editor-upload"/>
+                    </label>
+                </li>
+                <li class="fab-menu__item editor-save">
+                    <span class="fab-menu__item_desc">
+                        Save
+                    </span>
+                    <span class="fab-menu__item_icon">
+                        <i class="icon material-icons">cloud_download</i>
+                    </span>
+                </li>
+            </ul>
+
+            <div class="fab-menu__icon">
+                <i class="material-icons">more_vert</i>
+            </div>
+            
+            <!-- <div class="demo-file-wrapper">
                 <label for="image-file"></label>
                 <input id="image-file" type="file" multiple class="demo-fab__input demo-file-input" />
             </div>            
             
-            <i class="material-icons">insert_drive_file</i>
+            <i class="material-icons">insert_drive_file</i> -->
         </button>
 
 
@@ -107,6 +134,13 @@
 
                 editor.setImage(img)
             })
+
+            // save btn
+            document
+            .querySelector('.editor-save')
+            .addEventListener('click', _ => editor.save() )
+
+            window.editor = editor
         </script>
     </body>
 </html>
