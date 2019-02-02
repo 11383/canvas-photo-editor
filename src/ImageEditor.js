@@ -8,6 +8,7 @@ import CanvasSave from './ImageEditor/Utils/Canvas.js'
 /**
  * ImageEditor
  * Create canvas image editor
+ * @class ImageEditor
  */
 class ImageEditor {
     constructor(selector) {

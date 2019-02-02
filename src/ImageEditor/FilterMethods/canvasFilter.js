@@ -3,6 +3,8 @@ import filterInterface from './IFilterMethod.js'
 /**
  * CanvasFilter for ImageEditor
  * Operates of canvas proporties
+ * @class canvasFilter
+ * @extends {filterInterface}
  */
 class canvasFilter extends filterInterface {
 

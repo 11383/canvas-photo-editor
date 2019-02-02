@@ -4,6 +4,8 @@ import PixelFabric, {RGB} from '../Pixels/Pixels.js'
 /**
  * CanvasDataImgFilter for ImageEditor
  * Operates on canvas data img (raw pixels)
+ * @class canvasDataImg
+ * @extends {filterInterface}
  */
 class canvasDataImg extends filterInterface {
 
