@@ -1,3 +1,6 @@
+/**
+ * RGB
+ */
 class RGBPixel {
     constructor( r, g, b ) {
         this.r = r
@@ -5,6 +8,10 @@ class RGBPixel {
         this.b = b
     }
 
+    /**
+     * Set contrast
+     * @param {Number} value Contrast
+     */
     contrast(value) {
         const contrast = (value/100) + 1;
         const intercept = 128 * (1 - contrast);
@@ -16,6 +23,11 @@ class RGBPixel {
         return this
     }
 
+
+    /**
+     * Set Bright
+     * @param {Number} value Brightennes
+     */
     brighteness(value) {
         this.r += value
         this.g += value
@@ -24,6 +36,11 @@ class RGBPixel {
         return this
     }
 
+
+    /**
+     * Set Saturation
+     * @param {Number} value Saturation
+     */
     saturation(value) {
 
         var gray = 0.2989*this.r + 0.5870*this.g + 0.1140*this.b; //weights from CCIR 601 spec
@@ -34,6 +51,11 @@ class RGBPixel {
         return this
     }
 
+
+    /**
+     * Get RGB value
+     * @returns {Array} [R, G, B]
+     */
     value() {
         return [this.r, this.g, this.b]
     }

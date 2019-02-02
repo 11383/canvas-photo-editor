@@ -1,3 +1,6 @@
+/**
+ * HSL
+ */
 class HSLPixel {
     constructor( r, g, b ) {
         const [h, s, l] = HSLPixel.rgbToHsl(r, g, b)
@@ -7,24 +10,40 @@ class HSLPixel {
         this.l = l * 100
     }
 
+    /**
+     * Set contrast
+     * @param {Number} value Contrast
+     */
     contrast(value) {
         // @todo
 
         return this
     }
 
+    /**
+     * Set bright
+     * @param {Number} value Brighteness
+     */
     brighteness(value) {
         this.l += value
 
         return this
     }
 
+    /**
+     * Set saturation
+     * @param {Number} value Saturation
+     */
     saturation(value) {
         this.s = this.s / 10 * (value + 10)
 
         return this
     }
 
+    /**
+     * Get RGB value
+     * @returns {Array} [R, G, B]
+     */
     value() {
         return HSLPixel.hslToRGB(this.h, this.s, this.l)
     }

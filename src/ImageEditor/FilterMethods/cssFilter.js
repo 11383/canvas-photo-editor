@@ -1,5 +1,9 @@
 import filterInterface from './IFilterMethod.js'
 
+/**
+ * CSSFilter for ImageEditor
+ * Operates of css proporties
+ */
 class cssFilter extends filterInterface {
 
     constructor(options = {}) {

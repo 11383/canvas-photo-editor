@@ -6,7 +6,9 @@ const pixelClass = {
     HSLPixel
 }
 
-// Fabric
+/*
+ * Fabric of Pixels
+ */ 
 export default (name) => {
     return pixelClass[name]
 }

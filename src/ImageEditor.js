@@ -5,6 +5,10 @@ import {RGB, HSL} from './ImageEditor/Pixels/Pixels.js'
 import Effects from './ImageEditor/FilterEffects/Default.js'
 import CanvasSave from './ImageEditor/Utils/Canvas.js'
 
+/**
+ * ImageEditor
+ * Create canvas image editor
+ */
 class ImageEditor {
     constructor(selector) {
         
@@ -37,6 +41,10 @@ class ImageEditor {
         this.activeTransformMethod.use(this.options)
     }
 
+    /**
+     * Set Bright
+     * @param {Number} value brighteness [-1.0, 1.0]
+     */
     brighteness(value) {
         this.options.brighteness = value
 
@@ -45,6 +53,10 @@ class ImageEditor {
         this.draw()
     }
 
+    /**
+     * Set Contrast
+     * @param {Number} value contrast [-1.0, 1.0]
+     */
     contrast(value) {
         this.options.contrast = value
 
@@ -53,6 +65,10 @@ class ImageEditor {
         this.draw()
     }
 
+    /**
+     * Set saturation
+     * @param {Number} value saturation [-1.0, 1.0]
+     */
     saturation(value) {
         this.options.saturation = value
 
@@ -61,6 +77,10 @@ class ImageEditor {
         this.draw()
     }
 
+    /**
+     * Set selected effect strenght
+     * @param {Number} value 
+     */
     effect(value) {
         this.options.effect = value
 
@@ -239,6 +259,9 @@ class ImageEditor {
         this.drawImage()
     }
 
+    /**
+     * Save canvas
+     */
     save() {
         CanvasSave(this.canvas)
     }

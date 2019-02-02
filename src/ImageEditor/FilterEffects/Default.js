@@ -7,7 +7,7 @@
  */
 
 /**
- *  Postać Effect
+ *  Effect structure
  *  effect = {
  *      name: String // name of effect
  *      transformMethod: String, // one from available transform methods
@@ -32,6 +32,11 @@
   *     (value, { contrast, brighteenes, saturation}, PixelObject, { x, y, width, height })
   */
 
+/**
+ * name: Blur 
+ * filter: cssFilter
+ * desc: add blur
+ */
 const blur = {
     name: 'blur',
     transformMethod: 'cssFilter',
@@ -42,6 +47,11 @@ const blur = {
     }
 }
 
+/**
+ * name: Warm 
+ * filter: canvasRGB
+ * desc: make image warmer colors
+ */
 const warm = {
     name: 'warm',
     transformMethod: 'canvasRGB',
@@ -52,6 +62,11 @@ const warm = {
     }
 }
 
+/**
+ * name: OnlyRed 
+ * filter: canvasHSL
+ * desc: desaturate all colors except red from given range
+ */
 const onlyRed = {
     name: 'onlyRed',
     transformMethod: 'canvasHSL',
@@ -72,6 +87,11 @@ const onlyRed = {
     }
 }
 
+/**
+ * name: Contour 
+ * filter: canvasHSL
+ * desc: make light pixels more lighten, dark more darken
+ */
 const contour = {
     name: 'contour',
     transformMethod: 'canvasHSL',
@@ -85,6 +105,11 @@ const contour = {
     }
 }
 
+/**
+ * name: 4Colors 
+ * filter: canvasRGB
+ * desc: Split canvas to 4 colors
+ */
 const fourColors = {
     name: '4colors',
     transformMethod: 'canvasRGB',
@@ -103,6 +128,11 @@ const fourColors = {
     }
 }
 
+/**
+ * name: Rainbow 
+ * filter: canvasHSL
+ * desc: add rainbow effects to image
+ */
 const rainbow = {
     name: 'rainbow',
     transformMethod: 'canvasHSL',

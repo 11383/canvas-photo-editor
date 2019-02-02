@@ -1,3 +1,8 @@
+/**
+ * Save canvas
+ * @param {Canvas} canvas object of canvas 
+ * @param {String} fileName name of created file
+ */
 const Save = (canvas, fileName = new Date().getTime()) => {
 
     const mimeType = "image/png"

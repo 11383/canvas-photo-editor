@@ -1,5 +1,9 @@
 import filterInterface from './IFilterMethod.js'
 
+/**
+ * CanvasFilter for ImageEditor
+ * Operates of canvas proporties
+ */
 class canvasFilter extends filterInterface {
 
     constructor(options = {}) {
