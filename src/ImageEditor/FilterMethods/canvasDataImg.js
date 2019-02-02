@@ -1,6 +1,10 @@
 import filterInterface from './IFilterMethod.js'
 import PixelFabric, {RGB} from '../Pixels/Pixels.js'
 
+/**
+ * CanvasDataImgFilter for ImageEditor
+ * Operates on canvas data img (raw pixels)
+ */
 class canvasDataImg extends filterInterface {
 
     constructor(pixelClass = RGB) {
@@ -37,10 +41,11 @@ class canvasDataImg extends filterInterface {
         this.options.saturation = value * 10
     }
 
-    applyEffect(effect, pixel, i, width, height) {
+    applyEffect(effect, pixel, i, orgWidth, orgHeight, width, height, offsetX) {
+        
         effect(this.options, pixel, {
-            x: i / 4 % width,
-            y: Math.floor( i / 4 / width ) + 1,
+            x: (i / 4 % orgWidth) - offsetX,
+            y: Math.floor( i / 4 / orgHeight ) + 1,
             width,
             height
         })
@@ -48,23 +53,31 @@ class canvasDataImg extends filterInterface {
 
     draw(imageEditor, effect = null) {
         const imgData = imageEditor.getImgData()
+        const width = imageEditor.img.areaBounds[6]
+        const height = imageEditor.img.areaBounds[7]
+        const offsetX = (imgData.width - width) / 2
 
         for(let i=0; i < imgData.data.length; i += 4 ) {
-            let pixel = new this.pixelClass(
-                imgData.data[i], 
-                imgData.data[i+1], 
-                imgData.data[i+2]
-            )
+            const x = i / 4 % imgData.width 
 
-            if (effect) {
-                this.applyEffect(effect, pixel, i, imgData.width, imgData.height)
+            if( x > offsetX && x < imgData.width - offsetX) {
+
+                let pixel = new this.pixelClass(
+                    imgData.data[i], 
+                    imgData.data[i+1], 
+                    imgData.data[i+2]
+                )
+
+                if (effect) {
+                    this.applyEffect(effect, pixel, i, imgData.width, imgData.height, width, height, offsetX)
+                }
+                
+                [ imgData.data[i], imgData.data[i+1], imgData.data[i+2] ] = pixel
+                .contrast(this.options.contrast)
+                .saturation(this.options.saturation)
+                .brighteness(this.options.brighteness)
+                .value()
             }
-            
-            [ imgData.data[i], imgData.data[i+1], imgData.data[i+2] ] = pixel
-              .contrast(this.options.contrast)
-              .saturation(this.options.saturation)
-              .brighteness(this.options.brighteness)
-              .value()
         }
 
         imageEditor.putImageData(imgData)
