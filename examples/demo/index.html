@@ -118,6 +118,20 @@
             const editor = new ImageEditor('.demo-image-canvas')
                   editor.setImage('./img.jpg')
 
+            // add custom effect
+            editor.addEffect({
+                name: 'invert',
+                transformMethod: 'canvasHSL',
+                options: {
+                    effect: 1
+                },
+                draw: (value, {}, pixel) => {
+                    pixel.h -= 180
+
+                    return pixel
+                }
+            })
+
             initSlidersEvents('.editor-change', editor)
             initMethodsSelect('.editor-methods', editor)
             initEffectsSelect('.effects', editor, updateSliders)
@@ -139,6 +153,9 @@
             document
             .querySelector('.editor-save')
             .addEventListener('click', _ => editor.save() )
+
+            // debug on
+            editor.debug(true)
 
             window.editor = editor
         </script>

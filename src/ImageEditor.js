@@ -187,10 +187,17 @@ class ImageEditor {
         )
     }
 
+    /**
+     * @returns {Array} names of available transform methods
+     */
     getTransformMethods() {
         return Object.keys(this.transformMethods)
     }
 
+    /**
+     * Set given transform method as active
+     * @param {String} transformMethodName name of transform method to mark as active
+     */
     setTransformMethod(transformMethodName) {
         if(this.getTransformMethods().includes(transformMethodName)) {
             // unuse old
@@ -206,6 +213,10 @@ class ImageEditor {
     }
 
     draw() {
+        this._draw()
+    }
+
+    _draw() {
         this.activeTransformMethod.draw(
             this,
             this.drawEffect()
@@ -233,6 +244,10 @@ class ImageEditor {
         return this.effects.map( item => item.name )
     }
 
+    /**
+     * Set given effect as active
+     * @param {String} effectName name of effect to active
+     */
     setEffect(effectName) {
         const effect = this.effects.find( item => item.name == effectName )
 
@@ -249,7 +264,13 @@ class ImageEditor {
         }
     }
 
-    // clear effect
+    addEffect(effect) {
+        this.effects.push(effect)
+    }
+
+    /**
+     * Disable all effects
+     */
     clearEffect() {
         if (this.activeEffect) {
             this.activeTransformMethod.unuse(this)
@@ -265,6 +286,30 @@ class ImageEditor {
      */
     save() {
         CanvasSave(this.canvas)
+    }
+
+    /**
+     * Enable or disable debug
+     * @param {Boolean} state on|off
+     */
+    debug(state) {
+        if (state) {
+            this.draw = () => this.debugPerformance(this._draw.bind(this))
+        } else {
+            this.draw = this._draw
+        }
+    }
+
+    /**
+     * Debug performance of give function
+     * @param {CallableFunction} fn function to test performance
+     */
+    debugPerformance(fn) {
+        const startTest = performance.now()
+        fn()
+        const stopTest = performance.now()
+
+        console.log(stopTest - startTest)
     }
 }
 
